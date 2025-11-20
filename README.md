@@ -1,5 +1,8 @@
-# Projet d'Infrastruce WEB - Nginx
-## Projet Intranet NovaTech – Infrastructure LAMP
+# Projet d'Infrastructure WEB 
+## InfraWeb NovaTech - Intranet WordPress sécurisé avec LDAP & NGINX
+
+Ce projet met en place une infrastructure Web complète et sécurisée pour l’entreprise fictive NovaTech.
+Il simule un environnement professionnel et couvre l’ensemble des briques nécessaires à un Intranet moderne :
 
 ## Objectif du projet
 
