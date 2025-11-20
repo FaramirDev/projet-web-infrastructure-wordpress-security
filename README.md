@@ -1,8 +1,8 @@
-# Projet d'Infrastructure WEB 
+# Projet d'Infrastructure Web
 ## InfraWeb NovaTech - Intranet WordPress sécurisé avec LDAP & NGINX
 
-Ce projet met en place une infrastructure Web complète et sécurisée pour l’entreprise fictive NovaTech.
-Il simule un environnement professionnel et couvre l’ensemble des briques nécessaires à un Intranet moderne :
+Ce projet met en place une infrastructure **Web complète** et **sécurisée** pour l’entreprise fictive **NovaTech**.
+Il simule un **environnement** **professionnel** et couvre l’ensemble des briques nécessaires à un **Intranet** moderne :
 
 ## Objectif du projet
 
@@ -20,20 +20,23 @@ L’objectif est de constituer un lab complet d’Administration Système, Rése
 
 ---
 
-Nomenclature Etabli : 
+**Nomenclature** Etabli : 
 
 - Nom de l'entreprise : **NovaTech**
 - Nom du site WP choisi : **Intranet NovaTech**
-- Nom domaine choisi : `intranet.novatech`
+- Nom domaine choisi : `intranet.novatech.local`
 - Apache Backend : sur `port 8080`
 - Nginx Frontend : sur `port 443`
 - Nom Base de donnée mariadb : `wordpress_labs_2025`
 - User MariaDB : `wpadmin_labs_2025`
+- User WordPress `adminlabs2025`
+- User LDAP : `admin`
+- User server Administration serveur : `admin`
 - Emplacement WordPress : `/var/www/wordpress`
 
 Architecture entreprise - utilisateur test : 
-- Jean Duponts - employees
-- Marie Lefevre - Manager 
+- Jean Duponts - `employees`
+- Marie Lefevre - `Managers` 
 
 
 Le tout dans un environnement reproductible, cohérent, et sécurisé, comme en production.
@@ -73,9 +76,9 @@ Puis on mettra en place une **vm-test** d'un utilisateur de l'entreprise pour si
 Environnements Labs sous VirtualBox avec :
 
 1. Serveur : `vm-server` 
-    1. Réseaux **NatNetwork** sous `10.0.2.0/24` simulation réseau entreprise
-    2. Réseaux **Hots-only** sous `192.168.56.0/24` pour Administration
-    3. OS : ubuntu-server 22.04
+    - Réseaux **NatNetwork** sous `10.0.2.0/24` simulation réseau entreprise
+    - Réseaux **Hots-only** sous `192.168.56.0/24` pour Administration
+    - OS : ubuntu-server 22.04
 
 ### 1. Mettre à jours le Systeme 
 ```bash
@@ -121,12 +124,15 @@ l'hote a une interface réseau sous `192.168.56.1/24`
 sudo adduser adminsys
 sudo usermod -aG sudo adminsys  ##Droit sudo pour l'admin
 ```
+---
 
 ### 1.5 Installation des outils de base sysadmin : 
 
 ```bash
 sudo apt install -y vim curl wget git unzip software-properties-common net-tools htop ufw
 ```
+
+---
 
 ### 1.6 Installation du service ssh
 ```bash
@@ -136,6 +142,7 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 sudo systemctl status ssh ##Check si ssh ok (Running)
 ```
+---
 
 ### 1.7 Mise en place pare-feu stric avec UFW
 Comme **deux** pattes réseaux : 
@@ -178,6 +185,7 @@ sudo ufw status
 ![check status ssh ](./captures/captures_ufw.jpeg) 
 
 
+---
 
 ### 1.8 Check ssh avant config sécurisé 
 
@@ -186,6 +194,8 @@ sudo ufw status
 ssh adminsys@192.168.56.2
 ```
 - reussi -> Connexion SSh pour admin OK 
+
+---
 
 ### 1.9 Configuration SSH Sécurisé
 - 1. Save config inital de ssh
@@ -225,10 +235,11 @@ Puis **re-tester** la connexion depuis l'hote vers le serveur
 ```bash
 ssh adminsys@192.168.56.2
 ```
+
 Connexion **reussi OK** 
 
 
-
+---
 
 ### L'infrastructure web sur le Serveur `vm-server` est prete à etre installer et configurer
 
@@ -297,6 +308,7 @@ sudo mysql_secure_installation
 On a donc maintenant un mot de passe **root** pour **mariadb** 
 
 ---
+
 ### Installation PHP et extensions Wordpress
 
 ```bash
@@ -367,6 +379,7 @@ A noter qu'il est **important** de **mémoriser** ces informations :
 Pour **synchroniser** la base de donnée à **wordPress** lors de l'instalation de Wordpress.
 
 ---
+
 ### Télécharger Wordpress
 
 On va mainteant pouvoir télécharger Wordpress qui sera le coeur de notre site web
@@ -425,6 +438,8 @@ L'installation de stack **LAMP** + **wordpress** est maintenant effective
 - [X] Installation Mariadb
 - [X] Installation PHP 
 - [X] Téléchargement site wordpress
+
+---
 
 ## Configuration du VirtualHost Apache
 
@@ -549,6 +564,7 @@ curl -v http://127.0.0.1:8080/
 
 Notre **connexion** est bien **établie**, On va mainteant pouvoir **continuer** l'installation de wordpress depuis un **navigateur** par exemple. 
 
+---
 
 ## Installation de Wordpress 
 
@@ -573,6 +589,8 @@ Et Poursuivre l'installation avec les champs
 ![Check syntax apache](./captures/captures_wordpress_install_navigateur_05.jpeg)
 
 ![Check syntax apache](./captures/captures_wordpress_install_navigateur_06.jpeg)
+
+---
 
 **Installation de WordPress Réussi**
 
@@ -599,6 +617,7 @@ sudo chmod -R 400 /var/www/wordpress/wp-config.php
 On a donc mainteant WordPress d'installé sur notre serveur, pour l'instant accessible depuis le port `8080` avant l'arrivé de NGINX
 
 ---
+
 ## Installation et Configuration de LDAP
 
 Nous allons pouvoir maintenant installé et configurer notre annuaire LDAP avec les employés de l'entreprise qui centralisera par la suite les connexions sur l'intranet de Novatech
@@ -662,6 +681,9 @@ Ce qui nous donnera une architecture :
 ├── users.ldif           ## conf pour les users 
 └── groups.ldif          ## conf pour les groups  
 ```
+
+---
+
 1. Création du fichier des **Bases**
 
 ```bash 
@@ -684,6 +706,7 @@ puis **appliqué** le fichier **base**
 sudo ldapadd -x -D cn=admin,dc=novatech,dc=local -W -f ~/ldap_lab/base.ldif
 ```
 
+---
 
 2. Création du fichier des **Utilisateurs** 
 
@@ -714,6 +737,8 @@ Ensuite Appliqué la configuration `users.ldif` à LDAP ( needs password LDAP Ad
 sudo ldapadd -x -D cn=admin,dc=novatech,dc=local -W -f ~/ldap_lab/users.ldif
 ```
 
+---
+
 3. Création du fichier des **groupes**
 
 ```bash 
@@ -741,6 +766,8 @@ Ensuite Appliqué la configuration `groups.ldif` à LDAP ( needs password LDAP A
 sudo ldapadd -x -D cn=admin,dc=novatech,dc=local -W -f ~/ldap_lab/groups.ldif
 ```
 
+---
+
 4. Ensuite on peut vérifier les nouvelles entré de notre annuaire 
 
 ```bash
@@ -750,6 +777,8 @@ ldapsearch -x -LLL -b dc=novatech,dc=local
 ![capture config ldap](/captures/captures_ldap_configuration_2.jpeg)
 
 On a donc notre annuaire LDAP de mis en place, nous allons pouvoir installé le plugin qui va lié LDAP à WordPress 
+
+---
 
 ## Lié LDAP à WordPress
 
@@ -794,6 +823,8 @@ On a donc mainteant un **serveur LAMP wordpress** gérer par l'**acces** de notr
 
 On va pouvoir passer a la prochaine étape d'**installer** et de **configurer** **NGINX** devant Apache et avoir du **https** avec certificat TLS
 
+---
+
 ## Génération du Certificat TLS 
 
 Avant d'installer et de configurer NGINX
@@ -802,6 +833,7 @@ Nous allons générer le certificat pour HTTPS avec `openssl` ( *deja installé*
 ```bash
 sudo apt insatll openssl 
 ```
+--
 
 1. Rajouter un répertoire `novatech` où les certificats seront stockés
 
@@ -809,6 +841,9 @@ sudo apt insatll openssl
 sudo mkdir -p /etc/ssl/novatech
 sudo chmod 700 /etc/ssl/novatech    ##Attribuer permission
 ``` 
+
+
+---
 
 2. Ensuite on va générer la clé privée en 2048 bits
 
@@ -823,6 +858,8 @@ On doit donc également attribué une permission restrictive
 ```bash
 sudo chmod 600 /etc/ssl/novatech/intranet.key
 ```
+
+---
 
 3. On va mainteant générer le CSR ( Certificate Signing Request )
 
@@ -849,6 +886,8 @@ On va donc pouvoir obtenir le CSR grace la Key générer juste avant :
 sudo openssl req -new -key /etc/ssl/novatech/intranet.key -out /etc/ssl/novatech/intranet.csr
 ```
 
+---
+
 4. Génerer le Certificat Auto-Signé
 
 Nous avons maintenant tous les élements, la `Key` & le `CSR `( la demande de requet )
@@ -862,6 +901,8 @@ sudo openssl x509 -req -days 365 -in /etc/ssl/novatech/intranet.csr \
 
 On a donc mainteant un certifcat Auto-Signé pour notre intranet Novatech ici : `/etc/ssl/novatech/intranet.crt`
 
+---
+
 ## Installation & Configuration NGINX 
 
 Nous allons pouvoir installer et configurer Nginx 
@@ -870,6 +911,8 @@ Rappels :
 - **Nginx** sera **devant** Apache ( qui lui sera en backend sur le port `8080` )
 - **Nginx** sera sur le port `80` pour le **HTTP** et redigera sur le port `443` pour le **HTTPS** ( avec notre certificat TLS )
 - Puis **Nginx** transmettra les requêtes en **local** vers Apache donc vers `127.0.0.1:8080`
+
+---
 
 1. Installer Nginx 
 
@@ -892,6 +935,8 @@ On a donc une architecture qui est similaire dans les repertoires a la logique d
 dans `/etc/nginx/`
 
 ![capture archi nginx ](./captures/captures_nginx_architecture.jpeg)
+
+---
 
 2. Nous allons donc pouvoir configurer notre site 
 
@@ -979,6 +1024,8 @@ server {
 
 ```
 
+---
+
 3. Il faut mainteant activer le site
 
 En faisant le lien symbolique de `sites-availables` vers `sites-enabled` ( qui était fait par le module a2 sur apache )
@@ -992,6 +1039,8 @@ sudo systemctl reload nginx   ##Reload
 ![capture syntax nginx ](./captures/captures_nginx_checsyntax.jpeg)
 
 La Syntaxe et la configuration test sont ok et successfull
+
+---
 
 4. Ajuster WordpPress pour qu'il reconnaisse le HTTPS derrière le Proxy
 
@@ -1011,6 +1060,8 @@ define('FORCE_SSL_ADMIN', true);
 define('WP_HOME', 'https://intranet.novatech.local');
 define('WP_SITEURL', 'https://intranet.novatech.local');
 ```
+
+---
 
 5. Test de notre infrastructure web Nginx + Apache2 + LDAP
 
@@ -1051,6 +1102,8 @@ Pour vérifier que :
 - Et que Jdupont puisse également se conneceter 
 - Puis Vérifier également les logs d'acces après les test sur les machines
 
+---
+
 ## Test Hote 
 
 Test réalisé sur notre Hote qui simule le vlan administration sur la patte réseau `192.168.56.0/24`
@@ -1077,6 +1130,8 @@ Vérifions la remonté des log acces :
 ![capture test https admin](./captures/captures_nginx_connexion_hote8_log.jpeg)
 
 On a également bien les logs d'acces qui remonte avec l'ip de notre hote simulé de notre réseau administration `192.168.56.1`, et ici notre acces à la page `wp-admin` par exemple
+
+---
 
 ## Test sur la vm-entreprise de Mr Jdupont
 
@@ -1114,6 +1169,8 @@ On peut donc allé vérifier la remonté des logs sur notre serveur :
 Les logs d'acces remonte bien également 
 
 **On a donc mainteant notre infrastrucure web via notre serveur LAMP + WorPress + avec NGINX en Reverse-Proxy et notre Annuaire LDAP de configuré et opérationnel**
+
+---
 
 ## Durcicement de sécurité avec Fail2ban
 
@@ -1159,6 +1216,8 @@ sudo systemctl restart fail2ban
 sudo fail2ban-client status wordpress
 ```
 On a  donc maintant une protection avec fail2ban vs les ddos simple mais on pourrai bien évidemment allé plus loins dans la mise en sécurité de notre infrastructure web avec Crowdsec, etc. comme dans mon projet n°4. 
+
+---
 
 ## Conclusion du projet 
 
