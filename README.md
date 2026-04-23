@@ -1237,4 +1237,9 @@ L’ajout de fonctionnalités utilisateur avec Theme My Login a permis d’offri
 Je vous remercie d'avoir prit le temps de lire et de découvrir mon projet. 
 
 ---
+## Licence
+Ce projet est sous licence **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**.
+Toute utilisation commerciale est strictement interdite sans autorisation préalable. Consultez le fichier [LICENSE](./LICENSE) pour plus de détails.
+
+---
 **Alexis alias Faramir!**  
